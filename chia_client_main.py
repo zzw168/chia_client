@@ -253,6 +253,7 @@ class message_Thread(QThread):
 
 def select_change():  # 跟新单个客户机的P盘信息
     global time_pass
+    global message_init
 
     table = ui.tableWidget
     row = table.currentRow()
@@ -262,7 +263,23 @@ def select_change():  # 跟新单个客户机的P盘信息
     ui.lineEdit.setText(name)
     ip = table.item(row, 1).text()
     if time_pass < 11:
-        pass
+        table2 = ui.tableWidget_2
+        row = table2.rowCount()
+        if row != -1:
+            for i in range(0, row):
+                dt = table2.item(i, 1).text()
+                d_time = datetime.datetime.strptime(dt, '%Y-%m-%d %H:%M:%S')
+                start = int(time.mktime(d_time.timetuple()))
+                end = int(datetime.datetime.now().timestamp())
+                seconds = end - start
+                m, s = divmod(seconds, 60)
+                h, m = divmod(m, 60)
+                dt = "%d:%02d:%02d" % (h, m, s)
+                print(dt)
+                if table2.item(i, 2).text() != str(dt):
+                    update_time = QTableWidgetItem(str(dt))
+                    update_time.setTextAlignment(Qt.AlignCenter)
+                    table2.setItem(i, 2, update_time)
     else:
         time_pass = 1
         # SQL 查询语句
