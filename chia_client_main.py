@@ -592,14 +592,14 @@ def Send_UpdateKey():
     if re == QMessageBox.Yes:
         try:
             json_data = {
-                "cpu_num": ui.lineEdit_cpu.text(),
+                "cpu_num": int(ui.lineEdit_cpu.text()),
                 "fpk": ui.lineEdit_fpk.text(),
-                "is_reboot": "1",
+                "is_reboot": 1,
                 "name": ui.lineEdit_name.text(),
-                "num": ui.lineEdit_num.text(),
+                "num": int(ui.lineEdit_num.text()),
                 "ppk": ui.lineEdit_ppk.text(),
-                "sum": ui.lineEdit_sum.text(),
-                "username": ui.lineEdit_username.text(),
+                "sum": int(ui.lineEdit_sum.text()),
+                "username": int(ui.lineEdit_username.text()),
             }
             session = requests.session()
             response = session.post("http://%s:5000/e_config" % url, json=json_data)
