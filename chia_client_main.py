@@ -109,7 +109,6 @@ class My_Gui(chia_client_ui.Ui_MainWindow):
             # print('选择菜单1', table.item(table.currentRow(), 0).text())
             pyperclip.copy(table.item(table.currentRow(), 1).text())  # 把text字符串中的字符复制到剪切板
             text = pyperclip.paste()  # 把剪切板上的字符串复制到text
-            print(text)
         # if action == item2:
         #     print('选择菜单2', table.item(table.currentRow(), 0).text())
         # if action == item3:
@@ -132,7 +131,6 @@ def Get_userInfo():
         if t != results_count:
             table.setRowCount(results_count)
             if t < results_count:
-                print('aaa_%s' % t)
                 for j in range(t, results_count):
                     for k in range(0, table.columnCount()):
                         zero = QTableWidgetItem('0')
@@ -176,24 +174,6 @@ def Get_userInfo():
     except:
         print("Error: unable to fecth data")
 
-
-def run_cmd(cmd):
-    process = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                               stderr=subprocess.STDOUT)
-    try:
-        # while process.poll() is None:
-        #     line = process.stdout.readline()
-        #     line = line.strip()
-        #     if line:
-        #         log = line.decode("936", 'ignore')
-        #         print(log)
-        log = process.stdout.read().decode("936", 'ignore')
-        # print(log)
-        return log
-    except:
-        return 'error'
-
-
 def ping_host():
     if thread_data.run_flg == False:
         thread_data.run_flg = True
@@ -209,7 +189,6 @@ def ping_host():
 
 
 def signal_accept_data(i):
-    print(i)
     select_change()
 
 
@@ -232,7 +211,6 @@ class data_Thread(QThread):
 
 
 def signal_accept_message(i):
-    print(i)
     Get_userInfo()
     disk_full()
 
@@ -275,7 +253,6 @@ def select_change():  # 跟新单个客户机的P盘信息
                 m, s = divmod(seconds, 60)
                 h, m = divmod(m, 60)
                 dt = "%d:%02d:%02d" % (h, m, s)
-                print(dt)
                 if table2.item(i, 2).text() != str(dt):
                     update_time = QTableWidgetItem(str(dt))
                     update_time.setTextAlignment(Qt.AlignCenter)
@@ -330,7 +307,6 @@ def select_change():  # 跟新单个客户机的P盘信息
             if t != len_data:
                 table.setRowCount(len_data)
                 if t < len_data:
-                    print('aaa_%s' % t)
                     for j in range(t, len_data):
                         for k in range(0, table.columnCount()):
                             zero = QTableWidgetItem('0')
@@ -354,7 +330,6 @@ def select_change():  # 跟新单个客户机的P盘信息
                     path = QTableWidgetItem(str(dict_io_info[i]['path']))
                     path.setTextAlignment(Qt.AlignLeft)
                     table.setItem(i, 3, path)
-                print("ok__~~~~~")
 
             # P图进度信息——————————————————————————————————————————————————————————
             data = results[5]
@@ -365,7 +340,6 @@ def select_change():  # 跟新单个客户机的P盘信息
             if t != len(dict_data):
                 table.setRowCount(len(dict_data))
                 if t < len(dict_data):
-                    print('aaa_%s' % t)
                     for j in range(t, len(dict_data)):
                         for k in range(0, table.columnCount()):
                             zero = QTableWidgetItem('0')
@@ -378,7 +352,6 @@ def select_change():  # 跟新单个客户机的P盘信息
                 time_local = time.localtime(dict_data[i]['addtime'])
                 # 转换成新的时间格式(2016-05-05 20:28:54)
                 dt = time.strftime("%Y-%m-%d %H:%M:%S", time_local)
-                # print(dt)
                 if table.item(i, 1).text() != str(dt):
                     addtime = QTableWidgetItem(dt)
                     addtime.setTextAlignment(Qt.AlignCenter)
@@ -386,13 +359,10 @@ def select_change():  # 跟新单个客户机的P盘信息
 
                 end = int(datetime.datetime.now().timestamp())
                 start = dict_data[i]['addtime']
-                # print(start)
-                # print(end)
                 seconds = end - start
                 m, s = divmod(seconds, 60)
                 h, m = divmod(m, 60)
                 dt = "%d:%02d:%02d" % (h, m, s)
-                print(dt)
                 if table.item(i, 2).text() != str(dt):
                     update_time = QTableWidgetItem(str(dt))
                     update_time.setTextAlignment(Qt.AlignCenter)
@@ -416,7 +386,6 @@ def select_change():  # 跟新单个客户机的P盘信息
                     dt = '完成'
                 if dict_data[i]['staues'] == 3:
                     dt = '迁移中'
-                print(dt)
                 if table.item(i, 0).text() != str(dt):
                     staues = QTableWidgetItem(dt)
                     staues.setTextAlignment(Qt.AlignCenter)
@@ -430,7 +399,7 @@ def db_run(sql):
     db = pymysql.connect(user=user, password=password, host=host,
                          database=database)
     cur = db.cursor()
-    print(sql)
+    # print(sql)
     try:
         cur.execute(sql)
         db.commit()
@@ -449,7 +418,6 @@ def db_select(sql):
 
     # SQL 查询语句
     # sql = "SELECT * FROM %s WHERE ip='%s'" % ('userlist', ip)
-    print(sql)
     try:
         # 执行SQL语句
         cursor.execute(sql)
@@ -468,8 +436,7 @@ def delete_btnClick():
     num = table.currentRow()
     id = table.item(num, 0).text()
     sql = "DELETE FROM %s WHERE id =%d" % ('disklog', int(id))
-    results = db_run(sql)
-    print(results)
+    db_run(sql)
     table.removeRow(num)
 
 
@@ -484,7 +451,6 @@ def disk_full():  # 查询已满的硬盘信息
         if t != len_data:
             table.setRowCount(len_data)
             if t < len_data:
-                print('aaa_%s' % t)
                 for j in range(t, len_data):
                     for k in range(0, table.columnCount() - 1):
                         zero = QTableWidgetItem('0')
@@ -542,24 +508,24 @@ def ok_data():  # 查询已经完成的P盘任务信息
                 time_local = time.localtime(results[i][3])
                 # 转换成新的时间格式(2016-05-05 20:28:54)
                 dt = time.strftime("%Y-%m-%d %H:%M:%S", time_local)
-                addtime = QTableWidgetItem(str(dt))
-                addtime.setTextAlignment(Qt.AlignCenter)
-                table.setItem(i, 3, addtime)
+                add_time = QTableWidgetItem(str(dt))
+                add_time.setTextAlignment(Qt.AlignCenter)
+                table.setItem(i, 3, add_time)
 
                 seconds = results[i][4] - results[i][3]
                 m, s = divmod(seconds, 60)
                 h, m = divmod(m, 60)
                 t = "%d:%02d:%02d" % (h, m, s)
-                addtime = QTableWidgetItem(str(t))
-                addtime.setTextAlignment(Qt.AlignCenter)
-                table.setItem(i, 4, addtime)
+                add_time = QTableWidgetItem(str(t))
+                add_time.setTextAlignment(Qt.AlignCenter)
+                table.setItem(i, 4, add_time)
 
                 time_local = time.localtime(results[i][4])
                 # 转换成新的时间格式(2016-05-05 20:28:54)
                 dt = time.strftime("%Y-%m-%d %H:%M:%S", time_local)
-                endtime = QTableWidgetItem(str(dt))
-                endtime.setTextAlignment(Qt.AlignCenter)
-                table.setItem(i, 5, endtime)
+                end_time = QTableWidgetItem(str(dt))
+                end_time.setTextAlignment(Qt.AlignCenter)
+                table.setItem(i, 5, end_time)
 
                 to_path = QTableWidgetItem(str(results[i][7]))
                 to_path.setTextAlignment(Qt.AlignCenter)
