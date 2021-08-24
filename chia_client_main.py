@@ -7,10 +7,12 @@ import time
 
 import pymysql
 import pyperclip
+import requests
 
 from PyQt5.QtCore import Qt, QThread, pyqtSignal
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QHeaderView, QAbstractItemView, QPushButton, \
-    QMenu
+    QMenu, QMessageBox
+from requests import request
 
 import chia_client_ui
 
@@ -26,7 +28,7 @@ database = 'chia'
 global message_init
 
 
-class My_Gui(chia_client_ui.Ui_MainWindow):
+class My_Gui(chia_client_ui.Ui_MainWindow):  # 自定义窗口样式
     def __init__(self):
         super().__init__()
 
@@ -117,7 +119,7 @@ class My_Gui(chia_client_ui.Ui_MainWindow):
             return
 
 
-def Get_userInfo():
+def Get_userInfo():  # 获取 userlist 表数据 ，并更新客户机列表
     global message_init
     # SQL 查询语句
     sql = "SELECT * FROM %s ORDER BY name" % ('userlist')
@@ -174,7 +176,8 @@ def Get_userInfo():
     except:
         print("Error: unable to fecth data")
 
-def ping_host():
+
+def ping_host():  # 开启线程
     if thread_data.run_flg == False:
         thread_data.run_flg = True
         thread_data.start()
@@ -192,7 +195,7 @@ def signal_accept_data(i):
     select_change()
 
 
-class data_Thread(QThread):
+class data_Thread(QThread):  # 单个客户机详细资料线程
     _signal = pyqtSignal(int)  # 定义信号类型为整型
 
     def __init__(self):
@@ -215,7 +218,7 @@ def signal_accept_message(i):
     disk_full()
 
 
-class message_Thread(QThread):
+class message_Thread(QThread):  # 所有客户机总体情况线程
     _signal = pyqtSignal(int)  # 定义信号类型为整型
 
     def __init__(self):
@@ -265,7 +268,7 @@ def select_change():  # 跟新单个客户机的P盘信息
         try:
             # results = db_select(sql)
             for i in range(0, len(message_init)):
-                if message_init[i][1] == ip:
+                if message_init[i][1] == ip and message_init[i][2] == name:
                     results = message_init[i]
                     break
                 else:
@@ -545,6 +548,69 @@ def load_data():
     select_change()
 
 
+def Send_Reboot():
+    table = ui.tableWidget
+    num = table.currentRow()
+    url = table.item(num, 1).text()
+    re = QMessageBox.question(MainWindow, "提示", "是否重启 %s" % table.item(num, 0).text(), QMessageBox.Yes |
+                              QMessageBox.No, QMessageBox.No)
+    if re == QMessageBox.Yes:
+        try:
+            response = requests.get("http://%s:5000/reboot" % url)
+            if response.status_code != 200:
+                print(response)
+                QMessageBox.question(MainWindow, "提示", "重启 %s 失败" % table.item(num, 0).text(), QMessageBox.Ok)
+
+        except:
+            QMessageBox.question(MainWindow, "提示", "正在重启 %s" % table.item(num, 0).text(), QMessageBox.Ok)
+            table.item(num, 3).setText("重启中")
+
+
+def Send_shutdown():
+    table = ui.tableWidget
+    num = table.currentRow()
+    url = table.item(num, 1).text()
+    re = QMessageBox.question(MainWindow, "提示", "是否关机 %s" % table.item(num, 0).text(), QMessageBox.Yes |
+                              QMessageBox.No, QMessageBox.No)
+    if re == QMessageBox.Yes:
+        try:
+            response = requests.get("http://%s:5000/halt" % url)
+            if response.status_code != 200:
+                print(response)
+                QMessageBox.question(MainWindow, "提示", "关机 %s 失败" % table.item(num, 0).text(), QMessageBox.Ok)
+
+        except:
+            QMessageBox.question(MainWindow, "提示", "正在关机 %s" % table.item(num, 0).text(), QMessageBox.Ok)
+
+
+def Send_UpdateKey():
+    table = ui.tableWidget
+    num = table.currentRow()
+    url = table.item(num, 1).text()
+    re = QMessageBox.question(MainWindow, "提示", "是否更改 %s 配置信息" % table.item(num, 0).text(), QMessageBox.Yes |
+                              QMessageBox.No, QMessageBox.No)
+    if re == QMessageBox.Yes:
+        try:
+            json_data = {
+                "cpu_num": ui.lineEdit_cpu.text(),
+                "fpk": ui.lineEdit_fpk.text(),
+                "is_reboot": "1",
+                "name": ui.lineEdit_name.text(),
+                "num": ui.lineEdit_num.text(),
+                "ppk": ui.lineEdit_ppk.text(),
+                "sum": ui.lineEdit_sum.text(),
+                "username": ui.lineEdit_username.text(),
+            }
+            session = requests.session()
+            response = session.post("http://%s:5000/e_config" % url, json=json_data)
+            print(response)
+            if response.status_code == 200:
+                QMessageBox.question(MainWindow, "提示", "提交更改 %s 成功！" % table.item(num, 0).text(), QMessageBox.Ok)
+
+        except:
+            QMessageBox.question(MainWindow, "提示", "提交更改失败 %s" % table.item(num, 0).text(), QMessageBox.Ok)
+
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     MainWindow = QMainWindow()
@@ -568,6 +634,9 @@ if __name__ == "__main__":
     table.itemSelectionChanged.connect(load_data)
 
     ui.pushButton.clicked.connect(ok_data)
+    ui.pushButton_reboot.clicked.connect(Send_Reboot)
+    ui.pushButton_shutdown.clicked.connect(Send_shutdown)
+    ui.pushButton_update.clicked.connect(Send_UpdateKey)
 
     Get_userInfo()
     ping_host()

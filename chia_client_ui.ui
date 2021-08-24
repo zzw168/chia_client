@@ -364,17 +364,29 @@
                   <string>客户端信息</string>
                  </property>
                  <layout class="QGridLayout" name="gridLayout_3">
-                  <item row="5" column="0">
-                   <widget class="QLabel" name="label_10">
+                  <item row="3" column="1">
+                   <widget class="QLineEdit" name="lineEdit_username"/>
+                  </item>
+                  <item row="7" column="0">
+                   <widget class="QLabel" name="label_9">
                     <property name="text">
-                     <string>ppk：</string>
+                     <string>fpk：</string>
                     </property>
                    </widget>
                   </item>
-                  <item row="3" column="2">
-                   <widget class="QLabel" name="label_11">
+                  <item row="5" column="1" colspan="5">
+                   <widget class="QLineEdit" name="lineEdit_ppk"/>
+                  </item>
+                  <item row="1" column="1">
+                   <widget class="QLineEdit" name="lineEdit_name"/>
+                  </item>
+                  <item row="7" column="1" colspan="5">
+                   <widget class="QLineEdit" name="lineEdit_fpk"/>
+                  </item>
+                  <item row="1" column="2">
+                   <widget class="QLabel" name="label_6">
                     <property name="text">
-                     <string>CPU数量：</string>
+                     <string>       并数：</string>
                     </property>
                    </widget>
                   </item>
@@ -385,45 +397,15 @@
                     </property>
                    </widget>
                   </item>
-                  <item row="1" column="2">
-                   <widget class="QLabel" name="label_6">
+                  <item row="5" column="0">
+                   <widget class="QLabel" name="label_10">
                     <property name="text">
-                     <string>       并数：</string>
+                     <string>ppk：</string>
                     </property>
                    </widget>
-                  </item>
-                  <item row="1" column="0">
-                   <widget class="QLabel" name="label_5">
-                    <property name="text">
-                     <string>机名：</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="7" column="1" colspan="5">
-                   <widget class="QLineEdit" name="lineEdit_fpk"/>
                   </item>
                   <item row="3" column="3" colspan="3">
                    <widget class="QLineEdit" name="lineEdit_cpu"/>
-                  </item>
-                  <item row="3" column="1">
-                   <widget class="QLineEdit" name="lineEdit_username"/>
-                  </item>
-                  <item row="1" column="4">
-                   <widget class="QLabel" name="label_8">
-                    <property name="text">
-                     <string>总数：</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="7" column="0">
-                   <widget class="QLabel" name="label_9">
-                    <property name="text">
-                     <string>fpk：</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="1" column="1">
-                   <widget class="QLineEdit" name="lineEdit_name"/>
                   </item>
                   <item row="1" column="5">
                    <widget class="QLineEdit" name="lineEdit_sum">
@@ -434,9 +416,6 @@
                      </size>
                     </property>
                    </widget>
-                  </item>
-                  <item row="5" column="1" colspan="5">
-                   <widget class="QLineEdit" name="lineEdit_ppk"/>
                   </item>
                   <item row="1" column="3">
                    <widget class="QLineEdit" name="lineEdit_num">
@@ -451,6 +430,48 @@
                       <width>80</width>
                       <height>16777215</height>
                      </size>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="4">
+                   <widget class="QLabel" name="label_8">
+                    <property name="text">
+                     <string>总数：</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="0">
+                   <widget class="QLabel" name="label_5">
+                    <property name="text">
+                     <string>机名：</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="3" column="2">
+                   <widget class="QLabel" name="label_11">
+                    <property name="text">
+                     <string>CPU数量：</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="6">
+                   <widget class="QPushButton" name="pushButton_update">
+                    <property name="text">
+                     <string>更改KEY</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="7" column="6">
+                   <widget class="QPushButton" name="pushButton_shutdown">
+                    <property name="text">
+                     <string>关机</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="5" column="6">
+                   <widget class="QPushButton" name="pushButton_reboot">
+                    <property name="text">
+                     <string>重启</string>
                     </property>
                    </widget>
                   </item>
